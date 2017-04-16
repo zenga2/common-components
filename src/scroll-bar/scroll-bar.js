@@ -1,6 +1,7 @@
 // todo add click event(因为event.preventDefault()屏蔽了click事件)
 var ScrollBar = (function () {
     // 给元素增加内联样式
+    // todo 根据版本判断是否加前缀
     function insertStyle(el, styleObj) {
         Object.keys(styleObj).forEach(function (prop) {
             el.style[prop] = styleObj[prop]
@@ -63,14 +64,19 @@ var ScrollBar = (function () {
         var clientH = thisObj.wrapper.clientHeight
         var scrollH = thisObj.wrapper.scrollHeight
         var scrollBarTLY = -tlY * clientH / scrollH
-        thisObj.scrollBar.style.transform = 'translate3d(0,' + scrollBarTLY + 'px,0)'
-        thisObj.scroller.style.transform = 'translate3d(0,' + tlY + 'px,0)'
+        insertStyle(thisObj.scrollBar, {
+            transform: 'translate3d(0,' + scrollBarTLY + 'px,0)'
+        })
+        insertStyle(thisObj.scroller, {
+            transform: 'translate3d(0,' + tlY + 'px,0)'
+        })
     }
 
     function toggleScrollBar(flag, thisObj) {
-        var scrollBar = thisObj.scrollBar
-        scrollBar.style.transition = 'opacity 500ms'
-        scrollBar.style.opacity = flag ? 1 : 0
+        insertStyle(thisObj.scrollBar, {
+            transition: 'opacity 500ms',
+            opacity: flag ? 1 : 0
+        })
     }
 
     // 初始化touch事件
@@ -185,10 +191,14 @@ var ScrollBar = (function () {
                 transition: 'transform ' + duration + 'ms',
             })
 
-            el.addEventListener('transitionend', function fn() {
-                el.style.transition = ''
+            function fn() {
+                insertStyle(el, {transition: ''})
                 el.removeEventListener('transitionend', fn)
-            })
+                el.removeEventListener('webkitTransitionend', fn)
+            }
+
+            el.addEventListener('transitionend', fn)
+            el.addEventListener('webkitTransitionend', fn)
         })
 
         setTranslateY(-scrollTop, this)
