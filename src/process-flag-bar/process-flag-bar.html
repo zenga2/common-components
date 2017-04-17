@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        html, body, div, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            font-size: 0; /*清除inline-block之间的空隙（空白符导致的）*/
+            margin: 100px 0 0 100px;
+        }
+
+        ul li {
+            display: inline-block;
+            width: 150px;
+            text-align: center;
+        }
+
+        ul li:first-child {
+            margin-left: -32px;
+        }
+
+        ul li:last-child {
+            margin-right: -40px;
+        }
+
+        li div {
+            position: relative;
+        }
+
+        li div:after, li div:before {
+            position: absolute;
+            top: 12px;
+            width: 61px;
+            height: 4px;
+            background: #00b38a;
+            content: '';
+        }
+
+        li div:before {
+            left: 0;
+        }
+
+        li.active div:after, li.active div:before {
+            background: #616365;
+        }
+
+        li:last-child div:after, li:first-child div:before {
+            display: none;
+        }
+
+        li div .icon {
+            display: inline-block;
+            width: 28px;
+            line-height: 28px;
+            border-radius: 50%;
+            background: #00b38a;
+            color: #fff;
+        }
+        li.active div .icon {
+            background: #616365;
+        }
+
+        li span {
+            font-size: 20px
+        }
+    </style>
+</head>
+<body>
+<ul>
+    <li>
+        <div><span class="icon">1</span></div>
+        <span>投递成功</span></li>
+    <li>
+        <div><span class="icon">2</span></div>
+        <span>简历被查看</span></li>
+    <li class="active">
+        <div><span class="icon">3</span></div>
+        <span>待沟通</span></li>
+    <li class="active">
+        <div><span class="icon">4</span></div>
+        <span>不合适</span></li>
+</ul>
+</body>
+</html>
