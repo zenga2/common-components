@@ -49,11 +49,11 @@ var ScrollBar = (function () {
     // 缓动函数
     function ease(tlY, disY, clientH) {
         var x = tlY / clientH
-        if (x > 1) {
-            x = 1
-        }
+        x = x > 1 ? 1 : x
+
         var ratio = Math.pow(1 - x, 15)
         disY = disY * ratio;
+
         console.log('x: ' + x + ' ratio: ' + ratio + ' disY: ' + disY)
         return tlY + disY
     }
