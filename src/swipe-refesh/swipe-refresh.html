@@ -5,8 +5,116 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="./swipe-refresh.css">
 </head>
 <body>
+<div id="header">
+    <a href="javascript:void(0)" class="back"></a>
+    <h1 class="title">客户信息</h1>
+</div>
+<div id="content">
+    <div id="wrapper">
+        <div id="scroller">
+            <div class="top-tip-box">
+                <span></span>
+                <p>刷新中，请稍等...</p>
+            </div>
+            <div class="content-wrapper">
+                <ul class="content-list">
+                    <li class="item">
+                        <div class="info">
+                            <h6 class="info-top">
+                                <span class="pull-left">张化名</span>
+                                <span class="pull-right">15977884455</span>
+                            </h6>
+                            <div class="info-bottom">
+                                <p class="pull-left"><span>APP开户</span><span>中国银行网点</span></p>
+                                <p class="pull-right">11/27 13:45:01</p>
+                            </div>
+                        </div>
+                        <div class="status-wrapper">
+                            <span class="text">已完成</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="bottom-tip-box">
+                <span>正在加载中...</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer"></div>
+<script src="utils.js"></script>
+<script src="swipe-core.js"></script>
+<script src="swipe-refresh.js"></script>
+<script>
+    function loadData(flag) {
+        var liInnerHtml = [
+            '<li class="item"><div class="info"><h6 class="info-top"><span class="pull-left">',
+            '',
+            '</span><span class="pull-right">15977884455</span></h6><div class="info-bottom"><p class="pull-left"><span>APP开户</span><span>中国银行网点</span></p> <p class="pull-right">11/27 13:45:01</p></div></div><div class="status-wrapper"><span class="text">已完成</span></div></li>'
+        ]
+        var nameArr = ['dsfgskh', 'dgsdg', '张化名', '张525化名', '王五', '李四'];
 
+        var ulEl = document.querySelector('.content-list');
+        var liEl;
+
+        var method = flag ? 'insertBefore' : 'appendChild';
+        var index = Math.ceil(Math.random() * 5);
+        for (var i = 0; i < 6; i++) {
+
+            liEl = document.createElement('li');
+            ulEl[method](liEl, ulEl.firstElementChild);
+
+            liInnerHtml[1] = nameArr[index] + ' ' + i;
+            liEl.outerHTML = liInnerHtml.join('');
+        }
+    }
+
+    window.onload = function () {
+        loadData();
+    };
+
+
+</script>
+<script>
+    var wrapperHeight = document.getElementById('content').clientHeight;
+    var i = 0;
+
+    var swipeRefresh = new SwipeRefresh({
+        wrapper: '#wrapper',
+        scroller: '#scroller',
+        topBox: '.top-tip-box',
+        bottomBox: '.bottom-tip-box',
+        initHeight: wrapperHeight,
+        // 是否触发click
+        click: false,
+        refreshData: function (done) {
+            // refresh data
+            setTimeout(function () {
+                loadData(true);
+
+                // 数据刷新成功后必须调用done()
+                done();
+            }, 1000)
+
+        },
+        loadData: function (done) {
+            // load data
+            setTimeout(function () {
+                var isLoadedAllData = false;
+                if (i++ < 3) {
+                    loadData();
+                } else {
+                    isLoadedAllData = true;
+                }
+
+                // 数据加载成功后必须调用done()
+                done(isLoadedAllData);
+            }, 1000)
+        }
+    });
+</script>
 </body>
 </html>

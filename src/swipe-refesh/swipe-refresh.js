@@ -1,440 +1,251 @@
-window.requestAnimationFrame = window.requestAnimationFrame
-    || window.webkitRequestAnimationFrame
-    || function (fn) {
-        setTimeout(fn, 1000 / 60)
-    }
-
 var SwipeRefresh = (function () {
-    // 保存dom
-    var $Map = (function () {
-        var $wrapper = $("#wrapper");
-        var $scroller = $wrapper.find("#scroller");
-        var $topTipBox = $scroller.find(".pull_wrap");
-        var $dataBox = $scroller.find(".list_wrap");
-        var $bottomBox = $scroller.find(".load_wrap");
-        return {
-            "wrapper": $wrapper,
-            "scroller": $scroller,
-            "topTipBox": $topTipBox,
-            "topTipImg": $topTipBox.find("span"),
-            "topTipText": $topTipBox.find("p"),
-            "dataBox": $dataBox,
-            "bottomBox": $bottomBox
-        };
-    })();
-
-    // 保存各种全局参数
-    var pMap = (function () {
-        var topTipBoxHeight = $Map.topTipBox.outerHeight();
-        return {
-            "wrapperHeight": $("article").height(),
-            "scrollerHeight": 0,
-            "topTipBoxHeight": topTipBoxHeight,
-            "dataBoxHeight": 0,
-            // 上一次触发touchmove时的pageY值
-            "lastY": null,
-            // 滑动间隔（每次touchmove时间间隔里，手指在Y方向滑动的距离）
-            "disY": 0,
-            // 当前的滑动速度
-            "currV": 0,
-            // 上一次触发touchmove时的时间(ms)
-            "lastTime": null,
-            "translateY": -topTipBoxHeight,
-            // 上滑的阈值
-            "slideUpThreshold": null,
-            // 是否已全部加载
-            "isLoaded": false
-        };
-    })();
-
     // 常数
     var constMap = {
-        // 下拉时是否要刷新的translateY值
-        "startRefreshTLY": 0,
-        // 计算当前速度所用的时间间隔(ms)
-        "interval": 50,
-        // 自由滑动的阻滞系数(px/(ms)^2)
-        "a": 0.001,
-        "loadedTip": "已全部加载!",
+        // 底部框过度效果的duration
+        "durationOfBottomBoxTransition": 350,
+        // 顶部框过度效果的duration
+        "durationOfTopBoxTransition": 500,
+        // 顶部框中的图片过度效果的duration
+        "durationOfTopImgTransition": 350,
+        // 刷新成功后，显示成功标志的时间间隔
+        "intervalOfShowRefreshSucess": 500,
+        // 数据已全部加载完成后，显示该提示信息
+        "intervalOfShowLoadedAllData": 1500,
+        // 信息已全部加载完成的提示语
+        "loadedAllDataTip": "已全部加载!",
+        // 信息正在加载中的提示语
         "loadingTip": "正在加载中...",
+        // 顶部框还未全部下拉出来的提示语
         "beforeRefreshTip": "下拉刷新",
+        // 顶部框已经全部下拉出来的提示语
         "startRefreshTip": "释放刷新",
+        // 正在刷新的提示语
         "refreshingTip": "刷新中，请稍等...",
+        // 刷新成功的提示语
         "refreshedTip": "刷新成功"
     };
 
-    // 保存各种全局标识
-    var flagMap = {
+    // 保存各种全局的参数
+    var pMap = {
+        // 是否已全部加载
+        isLoadedAllData: false,
         // 标识当前滑动的状态
-        "currState": "",
-        // 一次触摸中，是否触发了touchmove事件
-        "isTouchMove": false
+        currState: "",
+        topTipImg: null,
+        topTipText: null
     };
 
-    function insertStyleAndHtml() {
-        $Map.wrapper.css({
-            "overflow": "hidden",
-            "background-color": "#f0f1f5",
-            "height": pMap.wrapperHeight
-        });
-        $Map.scroller.css({
-            "transform": "translate3d(0,-0.66rem,0)"
+    function initSwipeRefresh() {
+        var swipeCore = this.swipeCore;
+
+        swipeCore.on('touchstart', function () {
+            console.log("-----------start---------");
+            console.log("touchstart");
         });
 
-        $Map.topTipImg.css({
-            "transform": "translate3d(0," + (-pMap.topTipBoxHeight) + "px,0)"
+        swipeCore.on('afterTouchStart', function (e) {
+            console.log("afterTouchStart");
+            console.log(e);
         });
 
-        $Map.bottomBox.hide()
-    }
+        // 当滑动到tobBox部分显示出来时，
+        // 修改提示语和隐藏图标
+        swipeCore.on('showPartTop', function (e) {
+            var duration = constMap.durationOfTopImgTransition;
+            var topBoxHeight = e.topBox.clientHeight;
 
-    function touchstart(e) {
-        console.log("-----------start---------");
-        console.log("touchstart");
-        var touches = e.originalEvent.changedTouches;
-        if (touches && touches.length > 0) {
-            moveStart(touches[0].pageY);
-        }
-
-        e.preventDefault();
-    }
-
-    function moveStart(currY) {
-        pMap.scrollerHeight = $Map.scroller.height();
-        pMap.dataBoxHeight = $Map.dataBox.height();
-        pMap.lastY = currY;
-        pMap.disY = 0;
-        pMap.currV = 0;
-        pMap.lastTime = +(new Date);
-
-        // 上滑的阈值
-        var slideUpThreshold = pMap.wrapperHeight - pMap.scrollerHeight
-        pMap.slideUpThreshold = slideUpThreshold > -pMap.topTipBoxHeight
-            ? -pMap.topTipBoxHeight
-            : slideUpThreshold
-
-
-        flagMap.isTouchMove = false;
-
-        console.log("on touch")
-        console.log(pMap)
-        $Map.scroller.on("touchmove", touchmove);
-        $Map.scroller.on("touchend", touchend);
-        $Map.scroller.on("touchcancel", touchend)
-    }
-
-    function touchmove(e) {
-        if (flagMap.isTouchMove === false) {
-            flagMap.isTouchMove = true;
-        }
-
-        var touches = e.originalEvent.changedTouches;
-        if (touches && touches.length > 0) {
-            // 滑动过程中
-            moveIn(touches[0].pageY);
-        }
-
-        e.preventDefault();
-    }
-
-    // 滑动过程中
-    // currY：当前的pageY
-    // pMap.wrapperHeight既可能比pMap.scrollerHeight大，也可能比其小
-    var i = 0;
-
-    function moveIn(currY) {
-        pMap.disY = currY - pMap.lastY;
-        pMap.lastY = currY;
-
-        setTranslateY(ease(pMap.translateY, pMap.disY));
-
-        if (pMap.translateY > -pMap.topTipBoxHeight) {
-            // 随着滑动的进行修改头部的提示效果
-            changeTopBox(pMap.translateY);
-            console.log("------changeTopBox-----")
-        } else if (pMap.translateY <= pMap.slideUpThreshold) {
-            // 随着滑动的进行修改底部的提示效果
-            changeBottomBox()
-            console.log("------changeBottomBox-----")
-
-            $Map.scroller.off("touchmove", touchmove);
-        }
-
-        // 计算当前的滑动速度
-        var currTime = +(new Date);
-        var t = currTime - pMap.lastTime;
-        if (t > constMap.interval) {
-            pMap.currV = pMap.disY / t;
-            pMap.lastTime = currTime;
-        }
-    }
-
-    // 缓动效果
-    function ease(tlY, disY) {
-        var slideUpThreshold = pMap.slideUpThreshold
-        var newTLY = tlY + disY;
-
-        if (newTLY > pMap.wrapperHeight) {
-            newTLY = pMap.wrapperHeight * 0.75
-        } else if (newTLY > 0) {
-            var x = tlY / pMap.wrapperHeight;
-            x = x > 1 ? 1 : x;
-            var ratio = Math.pow(1 - x, 12);
-            disY = disY * ratio;
-            newTLY = tlY + disY
-        } else if (newTLY < slideUpThreshold) {
-            newTLY = slideUpThreshold;
-        }
-
-        return newTLY;
-    }
-
-    // 随着滑动的进行修改头部的提示效果
-    // todo 可以修改成触发事件式
-    function changeTopBox(tlY) {
-        // 整个头部显示出来
-        if (tlY > 0) {
             // 确保在连续触发touchmove时只执行一次
-            if (flagMap.currState !== "showWholeTop") {
-                flagMap.currState = "showWholeTop";
-                $Map.topTipText.text(constMap.startRefreshTip);
-                $Map.topTipImg.css({
-                    "transition": "all 350ms",
+            if (pMap.currState !== "showWholeTop") {
+                pMap.currState = "showWholeTop";
+
+                pMap.topTipText.textContent = constMap.beforeRefreshTip;
+                setCss(pMap.topTipImg, {
+                    "transition": "all " + duration + "ms",
+                    "transform": "translate3d(0," + (-topBoxHeight) + "px,0)"
+                });
+            }
+        });
+
+        // 当滑动到tobBox全部显示出来时，
+        // 修改提示语和显示图标
+        swipeCore.on('showWholeTop', function () {
+            var duration = constMap.durationOfTopImgTransition;
+
+            // 确保在连续触发touchmove时只执行一次
+            if (pMap.currState !== "showPartTop") {
+                pMap.currState = "showPartTop";
+
+                pMap.topTipText.textContent = constMap.startRefreshTip;
+                setCss(pMap.topTipImg, {
+                    "transition": "all " + duration + "ms",
                     "transform": "translate3d(0,0,0)"
                 });
             }
-        }
-        // 头部的bottom开始显示出来
-        else if (tlY > -pMap.topTipBoxHeight) {
-            // 确保在连续触发touchmove时只执行一次
-            if (flagMap.currState !== "startShowTop") {
-                flagMap.currState = "startShowTop";
-                $Map.topTipText.text(constMap.beforeRefreshTip);
-                $Map.topTipImg.css({
-                    "transition": "all 350ms",
-                    "transform": "translate3d(0," + (-pMap.topTipBoxHeight) + "px,0)"
-                });
-            }
-        }
-    }
+        });
 
-    // 修改底部的提示效果
-    function changeBottomBox() {
-        if (pMap.isLoaded) {
-            $Map.bottomBox.text(constMap.loadedTip);
-            if ($Map.bottomBox.is(":hidden")) {
-                $Map.bottomBox.show();
-                refresh();
-            }
-        } else {
-            $Map.bottomBox.text(constMap.loadingTip);
-            if ($Map.bottomBox.is(":hidden")) {
-                $Map.bottomBox.show()
-                refresh()
-            }
-        }
-    }
+        // 当滑动底部时，
+        // 修改底部的提示信息
+        swipeCore.on('hitedBottom', function (e) {
+            changeBottomBox(e, swipeCore);
+        })
 
-    function offTouchEvent() {
-        $Map.scroller.off("touchstart", touchstart);
-        $Map.scroller.off("touchmove", touchmove);
-        $Map.scroller.off("touchend", touchend);
-        $Map.scroller.off("touchcancel", touchend);
-    }
+        // 滑动结束时
+        swipeCore.on('moveEnd', function (e) {
+            constMap.fnMap = constMap.fnMap || {
+                    // 回弹到恰好显示整个topBox,同时刷新数据
+                    showWholeTop: function () {
+                        swipeCore.scrollTo(0, 350, function () {
+                            pMap.topTipText.textContent = constMap.refreshingTip;
+                            pMap.topTipImg.className = 'pull_load';
 
-    function touchend(e) {
-        var currV = pMap.currV;
-        var lastY = pMap.lastY;
+                            pMap.refreshData(e, function () {
+                                // 刷新数据成功后,先显示一段时间成功标识,然后隐藏topBox
+                                pMap.topTipImg.className = 'pull_success';
+                                pMap.topTipText.textContent = constMap.refreshedTip;
+                                setTimeout(function () {
+                                    hideTopBox(e, swipeCore, function () {
+                                        // 隐藏hideTop后，恢复滑动
+                                        swipeCore.done();
+                                    });
+                                }, constMap.intervalOfShowRefreshSucess);
+                            });
+                        });
+                    },
+                    showPartTop: function () {
+                        // 回弹到隐藏hideTop
+                        hideTopBox(e, swipeCore, function () {
+                            swipeCore.done();
+                        });
 
-        console.log('currV: ' + currV)
-        console.log("off touch")
-        offTouchEvent()
+                    },
+                    inTheMiddle: function () {
+                        swipeCore.done();
+                    },
+                    hitedBottom: function () {
+                        if (pMap.isLoadedAllData) {
+                            hideBottomBox(e, swipeCore, function () {
+                                // 恢复滑动
+                                swipeCore.done();
+                            });
+                        } else {
+                            pMap.loadData(e, function () {
+                                if (pMap.isLoadedAllData) {
+                                    changeBottomBox(e, swipeCore);
+                                }
+                                // 加载数据成功后,如果所有数据已加载，则隐藏bottomBox
+                                hideBottomBox(e, swipeCore, function () {
+                                    // 隐藏bottomBox后，恢复滑动
+                                    swipeCore.done();
+                                });
+                            });
+                        }
+                    }
+                };
 
-        if (currV === 0 || pMap.translateY > -pMap.topTipBoxHeight) {
-            console.log(1)
-            // 滑动过程结束
-            moveEnd();
-        } else if (currV > 0) {
-            console.log(2)
-            movefreely(Math.abs(currV), constMap.a, "down", lastY);
-        } else {
-            console.log(3)
-            movefreely(Math.abs(currV), constMap.a, "up", lastY);
-        }
+            var fn = constMap.fnMap[e.boundary];
+            fn && fn();
 
-        // 触发click和mousedown事件
-        if (flagMap.isTouchMove === false) {
-            $(e.target)
-            // .trigger("mousedown");
-            // .trigger("click");
-        }
-
-        e.preventDefault();
-    }
-
-    // 滑动过程结束
-    function moveEnd() {
-        if (pMap.translateY >= -pMap.topTipBoxHeight) {
-            $Map.scroller.css({
-                "transition": "all 350ms"
-            });
-        }
-
-        // 下拉到了TopBox完全露出来了，此时开始刷新的操作
-        if (pMap.translateY >= constMap.startRefreshTLY) {
-            setTranslateY(0);
-            $Map.topTipText.text(constMap.refreshingTip);
-            $Map.topTipImg.attr("class", "pull_load");
-
-            setTimeout(refreshSuccess, 3000);
-        }
-        // TopBox只露出一部分，这时直接回弹
-        else if (pMap.translateY > -pMap.topTipBoxHeight) {
-            hideTopBox();
-            onTouchStrat();
-        }
-        // 上滑到了底部，进行加载操作
-        else if (pMap.translateY <= pMap.slideUpThreshold) {
-            setTimeout(function () {
-                if (i++ < 3) {
-                    loadData();
-                    onTouchStrat();
-                } else {
-                    pMap.isLoaded = true;
-                    changeBottomBox();
-                    hideBottomBox(onTouchStrat);
-                }
-            }, 1000)
-        } else {
-            onTouchStrat();
-        }
-
-        console.log("touchend");
-        console.log("-----------end---------");
-    }
-
-    function onTouchStrat() {
-        console.log('on touch strat');
-        $Map.scroller.on("touchstart", touchstart);
-    }
-
-    function hideBottomBox(callback) {
-        setTimeout(function () {
-            $Map.bottomBox.hide();
-            refresh()
-
-            callback && callback();
-        }, 1500);
-    }
-
-    // 当BottomBox的显示状态改变时，刷新相关的状态值
-    function refresh() {
-        pMap.scrollerHeight = $Map.scroller.height();
-        // 上滑的阈值
-        var slideUpThreshold = pMap.wrapperHeight - pMap.scrollerHeight;
-        pMap.slideUpThreshold = slideUpThreshold > -pMap.topTipBoxHeight
-            ? -pMap.topTipBoxHeight
-            : slideUpThreshold;
-
-        $Map.scroller.css('transition', 'all 350ms')
-        setTranslateY(pMap.slideUpThreshold);
-
-        setTimeout(function () {
-            $Map.scroller.css('transition', '')
-        }, 350)
-    }
-
-    // 刷新成功
-    function refreshSuccess() {
-        loadData()
-
-        $Map.topTipImg.attr("class", "pull_success");
-        $Map.topTipText.text(constMap.refreshedTip);
-        setTimeout(function () {
-            hideTopBox();
-            onTouchStrat();
-        }, 500);
-    }
-
-    // 隐藏顶部的提示框
-    function hideTopBox() {
-        $Map.topTipImg.attr("class", "pull_down");
-        setTranslateY(-pMap.topTipBoxHeight);
-        setTimeout(function () {
-            $Map.scroller.css('transition', '')
-        }, 500);
-    }
-
-    function setTranslateY(tlY) {
-        pMap.translateY = tlY;
-        console.log(tlY)
-        $Map.scroller.css({
-            "transform": "translate3d(0," + pMap.translateY + "px,0)"
+            console.log("touchend");
+            console.log("-----------end---------");
         });
     }
 
-    // touchend后，带阻力的自由滑动
-    // v0：初始速度， a：加速度  direction 初始运动方向(up向上 down向下)
-    function movefreely(v0, a, direction, lastTLY) {
-        var startTime = +(new Date);
-        var timeOfMaxDis = v0 / a;
-        var maxDis = 0.5 * v0 * v0 / a;
+    // 隐藏顶部的提示框(无refresh)
+    function hideTopBox(e, swipeCore, callback) {
+        pMap.topTipImg.className = 'pull_down';
 
-        function calculateDistance(t) {
-            var dis = (v0 - 0.5 * a * t) * t;
-
-            return t < timeOfMaxDis ? dis : maxDis;
-        }
-
-        requestAnimationFrame(function fn() {
-            var t = +(new Date) - startTime;
-            var currDis = calculateDistance(t);
-            direction = currDis === maxDis ? "stop" : direction
-
-            // 限制惯性滑动的边界
-            // 下拉最多到topBox显示出来，上滑最多到底部（触发加载机制）
-            if (pMap.translateY > 0 || pMap.translateY <= pMap.slideUpThreshold) {
-                direction = "stop";
+        swipeCore.scrollTo(
+            e.topBoxHeight,
+            constMap.durationOfTopBoxTransition,
+            function () {
+                callback && callback();
             }
-
-            moveTo(currDis, direction, lastTLY);
-
-            if (direction !== "stop") {
-                requestAnimationFrame(fn)
-            }
-        })
+        );
     }
 
-    // 滑动
-    function moveTo(dis, direction, lastTLY) {
-        if (direction === "up") {
-            moveIn(lastTLY - dis);
-        } else if (direction === "down") {
-            moveIn(lastTLY + dis);
-        } else if (direction === "stop") {
-            moveEnd();
+    // 修改底部的提示效果
+    function changeBottomBox(e, swipeCore) {
+        e.bottomBox.firstElementChild.textContent = pMap.isLoadedAllData
+            ? constMap.loadedAllDataTip
+            : constMap.loadingTip;
+
+        if (e.bottomBox.style.display === 'none') {
+            e.bottomBox.style.display = '';
+            swipeCore.refresh();
+            swipeCore.scrollTo(-e.slideUpThreshold, constMap.durationOfBottomBoxTransition);
         }
     }
 
-    function SwipeRefresh(option) {
-        onTouchStrat()
+    // 隐藏底部的提示框（有refresh）
+    function hideBottomBox(e, swipeCore, callback) {
+        if (pMap.isLoadedAllData) {
+            setTimeout(fn, constMap.intervalOfShowLoadedAllData);
+        } else {
+            e.bottomBox.style.display = 'none';
+            swipeCore.refresh();
+            callback && callback();
+        }
+
+        function fn() {
+            e.bottomBox.style.display = 'none';
+            swipeCore.refresh();
+            swipeCore.scrollTo(
+                -e.slideUpThreshold,
+                constMap.durationOfBottomBoxTransition,
+                function () {
+                    callback && callback();
+                }
+            );
+        }
     }
 
-    SwipeRefresh.prototype.refresh = function () {
+    return createClass(
+        // constructor
+        function (option) {
+            extendObj(option, {
+                onAfterInit: function (e) {
+                    var els = e.topBox.children;
+                    var topBoxHeight = e.topBox.clientHeight;
 
-    }
+                    pMap.topTipImg = els[0];
+                    pMap.topTipText = els[1];
 
-    SwipeRefresh.prototype.scrollTo = function (scrollTop) {
+                    setCss(pMap.topTipImg, {
+                        "transform": "translate3d(0," + (-topBoxHeight) + "px,0)"
+                    })
 
-    }
+                    e.bottomBox.style.display = 'none';
+                }
+            })
+            this.swipeCore = new SwipeCore(option);
 
-    SwipeRefresh.prototype.on = function (eventType, fn) {
+            pMap.refreshData = function (e, callback) {
+                // 是刷新数据的时间最少为1s
+                // 让callback在数据刷新成功后执行，
+                // 同时确保callback的等待时间至少为1000ms
+                executeAfter(function (done) {
+                    option.refreshData.call(e, function () {
+                        done();
+                    })
+                }, callback, 1000);
 
-    }
+            };
 
-    SwipeRefresh.prototype.off = function (eventType, fn) {
+            pMap.loadData = function (e, callback) {
+                option.loadData.call(e, function (isLoadedAllData) {
+                    pMap.isLoadedAllData = isLoadedAllData;
+                    callback();
+                });
+            };
 
-    }
+            // 初始化组件
+            initSwipeRefresh.apply(this);
+        },
 
-    return SwipeRefresh;
+        // instance props
+        {},
+
+        // static props
+        {}
+    );
 })();
