@@ -254,7 +254,7 @@ var SwipeCore = (function () {
 
     function trigger(type, target) {
         if (!(/(SELECT|INPUT|TEXTAREA)/i).test(target.tagName)) {
-            let ev = document.createEvent(window.MouseEvent ? 'MouseEvents' : 'Event');
+            var ev = document.createEvent(window.MouseEvent ? 'MouseEvents' : 'Event');
             ev.initEvent(type, true, true);
             ev._constructed = true;
             target.dispatchEvent(ev);
@@ -329,12 +329,13 @@ var SwipeCore = (function () {
     /********************************* create class in follow ******************************************/
     // 构造函数
     function constructor(option) {
+        var self = this;
         console.log('swipeRefresh constructor');
         // 获取dom
         ['wrapper', 'scroller', 'topBox', 'bottomBox'].forEach(function (prop) {
             if (!prop) throw new Error('Invalid argument: property ' + prop + ' cannot be empty');
 
-            option[prop] = document.querySelector(option[prop]);
+            self[prop] = option[prop] = document.querySelector(option[prop]);
         });
 
         initState(option);
@@ -345,7 +346,14 @@ var SwipeCore = (function () {
 
     // 刷新相关的状态值
     // wrapperHeight|scrollerHeight|topBoxHeight|slideUpThreshold
-    function refresh() {
+    function refresh(warpperHeight) {
+        if (warpperHeight) {
+            pMap.wrapperHeight = warpperHeight;
+            setCss(pMap.wrapper, {
+                height: pMap.wrapperHeight + 'px'
+            });
+        }
+
         pMap.scrollerHeight = pMap.scroller.clientHeight;
         pMap.topBoxHeight = pMap.topBox.clientHeight;
         // 上滑的阈值

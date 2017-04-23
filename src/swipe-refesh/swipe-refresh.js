@@ -216,7 +216,8 @@ var SwipeRefresh = (function () {
 
                     e.bottomBox.style.display = 'none';
                 }
-            })
+            });
+
             this.swipeCore = new SwipeCore(option);
 
             pMap.refreshData = function (e, callback) {
