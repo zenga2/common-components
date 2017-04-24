@@ -1,5 +1,4 @@
-<center style='text-align: center'>swipe-refresh算法流程</center>
-
+## swipe-refresh算法流程
 ---
 
 ### moveIn阶段
