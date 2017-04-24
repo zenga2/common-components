@@ -119,6 +119,7 @@ function executeAfter(fn1, fn2, minInterval) {
     })
 }
 
+// 将日志显示在页面上
 function log(msg, i) {
     var logEl = document.createElement('div');
     document.body.insertBefore(logEl, document.body.firstElementChild);
