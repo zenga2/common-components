@@ -1,5 +1,7 @@
 <center>swipe-refresh算法流程</center>
+
 ---
+
 ###moveIn阶段
 ####下拉时
     1. >-topH && <0 时，显示"下拉刷新"
