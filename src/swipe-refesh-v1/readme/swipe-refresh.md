@@ -1,4 +1,4 @@
-<center>swipe-refresh算法流程</center>
+<center style='text-align: center'>swipe-refresh算法流程</center>
 
 ---
 
