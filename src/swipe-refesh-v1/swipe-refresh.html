@@ -115,6 +115,16 @@
             }, 1000)
         }
     });
+
+    // 当resize时调整wrapper的高度
+    window.addEventListener('resize', function () {
+        var wrapperHeight = document.getElementById('content').clientHeight;
+        swipeRefresh.swipeCore.refresh(wrapperHeight);
+    });
+
+    document.querySelector('.back').addEventListener('click', function () {
+        history.back();
+    })
 </script>
 </body>
 </html>
