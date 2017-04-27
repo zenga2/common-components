@@ -22,7 +22,7 @@ var SwipeCore = (function () {
 
         pMap = {
             // 是否启用到底部还可以继续滑动(默认不容许)
-            allowScrollAfterHitedBottom: false,
+            allowScrollAfterHitBottom: false,
             // 是否触发click
             click: false
         };
@@ -133,11 +133,11 @@ var SwipeCore = (function () {
                     fire('inTheMiddle');
                 },
                 // 到了底部
-                hitedBottom: function () {
-                    fire('hitedBottom');
+                hitBottom: function () {
+                    fire('hitBottom');
 
                     // 到底部后，禁止再继续滑动
-                    if (!pMap.allowScrollAfterHitedBottom) {
+                    if (!pMap.allowScrollAfterHitBottom) {
                         pMap.scroller.removeEventListener("touchmove", touchmove);
                     }
                 }
@@ -170,10 +170,10 @@ var SwipeCore = (function () {
         // 到了底部
         else if (translateY <= pMap.slideUpThreshold) {
             // 解决当scrollerHeight <= wrapperHeight + pMap.topBoxHeight，
-            // 会出现小幅下拉触发boundary = 'hitedBottom'的问题；
-            // 或则当加载数据后，小幅下拉触发boundary = 'hitedBottom'的问题
+            // 会出现小幅下拉触发boundary = 'hitBottom'的问题；
+            // 或则当加载数据后，小幅下拉触发boundary = 'hitBottom'的问题
             if (pMap.lastY - pMap.startY < -constMap.minDis) {
-                boundary = 'hitedBottom';
+                boundary = 'hitBottom';
             }
         }
 
@@ -379,7 +379,7 @@ var SwipeCore = (function () {
         initTouchEvent();
     }
 
-    // supoort: startShowTop, showWholeTop, inTheMiddle, hitedBottom, moveEnd
+    // supoort: startShowTop, showWholeTop, inTheMiddle, hitBottom, moveEnd
     // supoort: initStyle, touchstart, afterTouchStart
     function on(eventType, fn) {
         eventType = 'on' + firstLetterToUpperCase(eventType);

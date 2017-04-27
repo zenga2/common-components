@@ -85,7 +85,7 @@ var SwipeRefresh = (function () {
 
         // 当滑动底部时，
         // 修改底部的提示信息
-        swipeCore.on('hitedBottom', function (e) {
+        swipeCore.on('hitBottom', function (e) {
             changeBottomBox(e, swipeCore);
         })
 
@@ -121,7 +121,7 @@ var SwipeRefresh = (function () {
                     inTheMiddle: function () {
                         swipeCore.done();
                     },
-                    hitedBottom: function () {
+                    hitBottom: function () {
                         if (pMap.isLoadedAllData) {
                             hideBottomBox(e, swipeCore, function () {
                                 // 恢复滑动
