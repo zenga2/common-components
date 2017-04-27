@@ -132,9 +132,6 @@ var SwipeRefresh = (function () {
 
             var fn = constMap.fnMap[event.boundary];
             fn && fn();
-
-            console.log("touchend");
-            console.log("-----------end---------");
         });
 
         // only support scroll topBox
