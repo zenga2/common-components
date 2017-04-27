@@ -94,10 +94,10 @@ var SwipeRefresh = (function () {
             constMap.fnMap = constMap.fnMap || {
                     // 回弹到恰好显示整个topBox,同时刷新数据
                     showWholeTop: function () {
-                        swipeCore.scrollTo(0, 350, function () {
-                            pMap.topTipText.textContent = constMap.refreshingTip;
-                            pMap.topTipImg.className = 'pull_load';
+                        pMap.topTipText.textContent = constMap.refreshingTip;
+                        pMap.topTipImg.className = 'pull_load';
 
+                        swipeCore.scrollTo(0, 350, function () {
                             pMap.refreshData(e, function () {
                                 // 刷新数据成功后,先显示一段时间成功标识,然后隐藏topBox
                                 pMap.topTipImg.className = 'pull_success';
