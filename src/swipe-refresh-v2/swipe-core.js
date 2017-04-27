@@ -4,7 +4,8 @@ var SwipeCore = (function () {
         // 页面(translateY)到了-topH之后的pageY
         pageYAfterHideTop: 0,
         // topBox是否隐藏了
-        isHidden: true
+        isHidden: true,
+        isWeixinBrowser: (/micromessenger/i).test(navigator.userAgent)
     };
 
     function touchstart(event) {
@@ -94,7 +95,7 @@ var SwipeCore = (function () {
             pMap.disY = currY - pMap.lastY;
             pMap.lastY = currY;
 
-            if (scrollTop === 0 && pMap.disY > 0) {
+            if (scrollTop === 0 && pMap.disY > 0 && !pMap.isWeixinBrowser) {
                 toggleTouch(true);
             }
         }
