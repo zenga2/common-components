@@ -38,7 +38,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="bottom-tip-box">
+            <div class="bottom-tip-box loading">
                 <span>正在加载中...</span>
             </div>
         </div>
@@ -47,6 +47,7 @@
 <div id="footer"></div>
 <script src="utils.js"></script>
 <script src="swipe-core.js"></script>
+<script src="swipe-refresh.js"></script>
 <!--<script src="swipe-refresh.js"></script>-->
 <script>
     function loadData(flag) {
@@ -78,11 +79,37 @@
         loadData();
         loadData();
 
-        new SwipeCore({
+        var i = 0;
+
+        new SwipeRefresh({
             wrapper: '#wrapper',
             scroller: '#scroller',
             topBox: '.top-tip-box',
-            bottomBox: '.bottom-tip-box'
+            bottomBox: '.bottom-tip-box',
+            refreshData: function (done) {
+                // refresh data
+                setTimeout(function () {
+                    loadData(true);
+
+                    // 数据刷新成功后必须调用done()
+                    done();
+                }, 1000)
+
+            },
+            loadData: function (done) {
+                // load data
+                setTimeout(function () {
+                    var isLoadedAllData = false;
+                    if (i++ < 3) {
+                        loadData();
+                    } else {
+                        isLoadedAllData = true;
+                    }
+
+                    // 数据加载成功后必须调用done()
+                    done(isLoadedAllData);
+                }, 1000)
+            }
         });
     };
 

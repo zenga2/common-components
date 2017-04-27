@@ -143,3 +143,14 @@ function bindEvent(el, type, fn) {
     el.addEventListener(type, fn);
 }
 
+function animation(workFn, duration) {
+    var startTime = +(new Date);
+    requestAnimationFrame(function step() {
+        var currTime = +(new Date);
+        workFn((currTime - startTime) / duration);
+        if (currTime < duration) {
+            requestAnimationFrame(step);
+        }
+    });
+}
+
