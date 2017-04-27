@@ -39,13 +39,11 @@ var SwipeCore = (function () {
 
             // currY-pMap.pageYAfterHideTop<-10表示此时是往上滑的
             if (pMap.isHidden && currY - pMap.pageYAfterHideTop < -10) {
-                console.log('dfgdg');
                 toggleTouch(false);
             }
         }
 
         event.preventDefault();
-        // console.log(pMap.wrapper.scrollTop + '---touchmove');
     }
 
     function ease() {
@@ -90,11 +88,8 @@ var SwipeCore = (function () {
         // 头部未完全隐藏
         if (!pMap.isHidden) {
             // 兼容PC(只在滚动鼠标滑轮时才会用到这段代码)
-            console.log('wwww-----1');
             supportPC();
         } else {
-            console.log('wwww-----2');
-
             currY = pMap.pageYAfterHideTop - scrollTop;
             pMap.disY = currY - pMap.lastY;
             pMap.lastY = currY;
@@ -112,12 +107,9 @@ var SwipeCore = (function () {
             setTranslateY(ease());
         }
 
-        if(isHitBottom()){
+        if (isHitBottom()) {
             fire('moveEnd', {boundary: 'hitBottom'});
         }
-
-        console.log('disY: ', pMap.disY)
-        console.log(pMap.wrapper.scrollTop + '---scrollIn');
     }
 
     function setTranslateY(tlY, notFire) {
@@ -159,16 +151,12 @@ var SwipeCore = (function () {
         }
 
         pMap.isBindTouch = flag;
-        var arr = flag
-            ? ['addEventListener', 'hidden']
-            : ['removeEventListener', 'auto'];
-        var method = arr[0];
+        var method = flag
+            ? 'addEventListener'
+            : 'removeEventListener';
         var scroller = pMap.scroller;
         scroller[method]('touchmove', touchmove);
         scroller[method]('touchend', touchend);
-        // pMap.wrapper.style.overflow = arr[1];
-
-        console.log((flag ? 'on' : 'off') + ' touch');
     }
 
     // 当bottomBox上边框外边缘显示出来时就算触底了
@@ -204,7 +192,6 @@ var SwipeCore = (function () {
             : defaultEvent;
 
         fn && fn(event);
-        // console.log(eventType, event);
     }
 
     function constructor(opts) {
