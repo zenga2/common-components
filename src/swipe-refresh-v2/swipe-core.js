@@ -5,10 +5,14 @@ var SwipeCore = (function () {
         pageYAfterHideTop: 0,
         // topBox是否隐藏了
         isHidden: true,
+        // 用于确保一次滑动最多触发一次hitBottom事件
+        isFireHitBottom: false,
         isWeixinBrowser: (/micromessenger/i).test(navigator.userAgent)
     };
 
     function touchstart(event) {
+        pMap.isFireHitBottom = false;
+
         var touches = event.changedTouches;
         if (touches && touches.length > 0) {
             var scrollTop = pMap.wrapper.scrollTop;
@@ -181,6 +185,12 @@ var SwipeCore = (function () {
     }
 
     function fire(eventType, event) {
+        // 用于确保一次滑动最多触发一次hitBottom事件
+        if (eventType === 'moveEnd' && event.boundary === 'hitBottom') {
+            if (pMap.isFireHitBottom) return;
+            pMap.isFireHitBottom = true;
+        }
+
         // 通过defaultEvent只能读取pMap的属性，不能修改
         var defaultEvent = Object.create(pMap);
         defaultEvent.type = eventType;
