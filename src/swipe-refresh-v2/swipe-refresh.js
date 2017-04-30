@@ -53,9 +53,10 @@ var SwipeRefresh = (function () {
 
         var topBox = pMap.topBox;
         var els = topBox.children;
-        var topBoxHeight = topBox.clientHeight;
         pMap.topTipImg = els[0];
         pMap.topTipText = els[1];
+
+        var topBoxHeight = topBox.clientHeight;
         setCss(pMap.topTipImg, {
             "transform": "translate3d(0," + (-topBoxHeight) + "px,0)"
         });
