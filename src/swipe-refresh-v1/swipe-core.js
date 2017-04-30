@@ -330,12 +330,12 @@ var SwipeCore = (function () {
     // 构造函数
     function constructor(option) {
         var self = this;
-        console.log('swipeRefresh constructor');
         // 获取dom
         ['wrapper', 'scroller', 'topBox', 'bottomBox'].forEach(function (prop) {
-            if (!prop) throw new Error('Invalid argument: property ' + prop + ' cannot be empty');
+            var val = option[prop];
+            if (!val) throw new Error('Invalid argument: property ' + prop + ' cannot be empty');
 
-            self[prop] = option[prop] = document.querySelector(option[prop]);
+            self[prop] = option[prop] = document.querySelector(val);
         });
 
         initState(option);

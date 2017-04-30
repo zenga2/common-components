@@ -199,9 +199,10 @@ var SwipeCore = (function () {
         extendObj(pMap, opts);
 
         ['wrapper', 'scroller', 'topBox', 'bottomBox'].forEach(function (prop) {
-            if (!prop) throw new Error('Invalid argument: property ' + prop + ' cannot be empty');
+            var val = pMap[prop];
+            if (!val) throw new Error('Invalid argument: property ' + prop + ' cannot be empty');
 
-            pMap[prop] = document.querySelector(pMap[prop]);
+            pMap[prop] = document.querySelector(val);
         });
 
         this.pMap = Object.create(pMap);
