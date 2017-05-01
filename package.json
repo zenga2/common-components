@@ -13,6 +13,7 @@
   "author": "zenga2",
   "license": "ISC",
   "devDependencies": {
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "open": "0.0.5"
   }
 }

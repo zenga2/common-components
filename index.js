@@ -1,4 +1,5 @@
 var express = require('express')
+var open = require('open')
 
 var app = express()
 var router = express.Router()
@@ -17,5 +18,8 @@ module.exports = app.listen('8000', function (err) {
         console.log(err)
         return
     }
+
+    open('http://localhost:8000', 'chrome', function () {})
+
     console.log('Listening at http://localhost:' + 8000 + '\n')
 })
