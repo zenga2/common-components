@@ -13,10 +13,17 @@
 
 ### swipe-refresh-with-plugin
     这个是基于better-scroll(类似iscroll的滑动插件)实现的下拉刷新上滑加载组件
+    
+### swipe-change-top-box-v1
+    下拉时在顶部空出来的地方填充相同的背景色(与topBox相同)，回弹时反之
+    
+### swipe-change-top-box-v1
+    下拉时放大topBox，回弹时再相应地缩小
 
 ### 开发进度
 - [x] swipe-refresh-v1 下拉刷新上滑加载组件(原生JS实现第一版)
 - [x] swipe-refresh-v2 下拉刷新上滑加载组件(原生JS实现第二版)
 - [x] swipe-refresh-with-plugin 下拉刷新上滑加载组件(基于第三方插件better-scroll开发)
-- [x] swipe-change-top-box  下滑时放大topBox的
+- [x] swipe-change-top-box-v1  下滑时填充相同的背景色
+- [x] swipe-change-top-box-v2  下滑时放大topBox的
 - [ ] swipe-search  滑动搜索
