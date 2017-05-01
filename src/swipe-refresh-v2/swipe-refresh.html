@@ -9,7 +9,7 @@
 </head>
 <body>
 <div id="header">
-    <!--<a href="javascript:void(0)" class="back"></a>-->
+    <a href="javascript:void(0)" class="back"></a>
     <h1 class="title">客户信息</h1>
 </div>
 <div id="content">
@@ -79,7 +79,6 @@
         loadData();
 
         var i = 0;
-
         new SwipeRefresh({
             wrapper: '#wrapper',
             scroller: '#scroller',
@@ -109,6 +108,10 @@
                     done(isLoadedAllData);
                 }, 1000)
             }
+        });
+
+        document.querySelector('.back').addEventListener('click', function () {
+            history.back();
         });
     };
 
