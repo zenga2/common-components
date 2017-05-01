@@ -18,5 +18,5 @@
 - [x] swipe-refresh-v1 下拉刷新上滑加载组件(原生JS实现第一版)
 - [x] swipe-refresh-v2 下拉刷新上滑加载组件(原生JS实现第二版)
 - [x] swipe-refresh-with-plugin 下拉刷新上滑加载组件(基于第三方插件better-scroll开发)
-- [ ] swipe-change-top-box  下滑时放大topBox的
+- [x] swipe-change-top-box  下滑时放大topBox的
 - [ ] swipe-search  滑动搜索
