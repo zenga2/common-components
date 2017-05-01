@@ -67,6 +67,5 @@
 1. 上面这个页面在一般浏览器上渲染后，应该是#bd和#wrapper的高度一样,#scroller为2000px,
 这比#bd和#wrapper的高度要大，所以#wrapper出现滚动条。
 但是UC这个奇葩，它上面却是#wrapper和#scroller的高度一样，都为2000px，这样#wrapper就不会出现滚动条
-2. 目前因为该bug导致组件不能在UC上运行，决定放弃支持这垃圾UC(虽然改起来不难,只需将flex布局换成absolute布局就可以了)
-3. 目前animation和keyframes在UC必须要加-webkit-前缀才能使用
+2. 目前animation和keyframes在UC必须要加-webkit-前缀才能使用
 

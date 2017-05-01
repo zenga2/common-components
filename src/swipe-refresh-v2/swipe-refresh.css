@@ -11,8 +11,7 @@ body * {
     box-sizing: border-box;
 }
 body {
-    display: flex;
-    flex-direction: column;
+    position: relative;
 }
 h1, h2, h3, h4, h5, h6 {
     font-style: normal;
@@ -53,8 +52,10 @@ a{
     color:#fff;
 }
 #content{
-    overflow: hidden;
-    flex: 1;
+    position: absolute;
+    top:44px;
+    bottom: 0;
+    width: 100%;
     font-size:14px;
     background: #f0f1f5;
 }
