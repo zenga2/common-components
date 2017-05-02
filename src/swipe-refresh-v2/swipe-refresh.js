@@ -171,17 +171,15 @@ var SwipeRefresh = (function () {
         }
     }
 
-    function constructor(opts) {
-        this.swipeCore = new SwipeCore(opts);
-
-        initState.call(this, opts);
-
-        initEvent.call(this);
-    }
-
     return createClass(
         //constructor
-        constructor,
+        function (opts) {
+            this.swipeCore = new SwipeCore(opts);
+
+            initState.call(this, opts);
+
+            initEvent.call(this);
+        },
         // instance props
         {},
         // static
