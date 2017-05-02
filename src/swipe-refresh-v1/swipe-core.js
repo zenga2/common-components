@@ -27,11 +27,11 @@ var SwipeCore = (function () {
             click: false
         };
 
-        extendObj(pMap, option);
+        extend(pMap, option);
 
         var wrapperHeight = option.initHeight || pMap.wrapper.clientHeight;
 
-        extendObj(pMap, {
+        extend(pMap, {
             wrapperHeight: wrapperHeight,
             scrollerHeight: null,
             // 上滑的阈值
@@ -400,7 +400,7 @@ var SwipeCore = (function () {
         var fn = pMap[eventType];
 
         event = (event && typeof event === 'object')
-            ? extendObj(defaultEvent, event)
+            ? extend(defaultEvent, event)
             : defaultEvent;
 
         fn && fn(event);

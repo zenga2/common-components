@@ -202,7 +202,7 @@ var SwipeRefresh = (function () {
     return createClass(
         // constructor
         function (option) {
-            extendObj(option, {
+            extend(option, {
                 onAfterInit: function (e) {
                     var els = e.topBox.children;
                     var topBoxHeight = e.topBox.clientHeight;

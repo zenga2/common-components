@@ -119,7 +119,7 @@ var SwipeRefresh = (function () {
     }
 
     function constructor(opts) {
-        extendObj(pMap, opts);
+        extend(pMap, opts);
 
         ['wrapper', 'scroller', 'topBox', 'bottomBox'].forEach(function (prop) {
             var val = pMap[prop];

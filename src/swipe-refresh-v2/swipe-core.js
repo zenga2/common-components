@@ -199,14 +199,14 @@ var SwipeCore = (function () {
         var fn = pMap[eventType];
 
         event = (event && typeof event === 'object')
-            ? extendObj(defaultEvent, event)
+            ? extend(defaultEvent, event)
             : defaultEvent;
 
         fn && fn(event);
     }
 
     function constructor(opts) {
-        extendObj(pMap, opts);
+        extend(pMap, opts);
 
         ['wrapper', 'scroller', 'topBox', 'bottomBox'].forEach(function (prop) {
             var val = pMap[prop];

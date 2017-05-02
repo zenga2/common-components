@@ -141,7 +141,7 @@ var SwipeCore = (function () {
     }
 
     function constructor(opts) {
-        extendObj(pMap, opts);
+        extend(pMap, opts);
 
         ['wrapper', 'scroller'].forEach(function (prop) {
             var val = pMap[prop];
