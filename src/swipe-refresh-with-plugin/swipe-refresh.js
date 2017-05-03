@@ -1,6 +1,5 @@
 var SwipeRefresh = (function () {
     // 常数
-    // 常数
     var constMap = {
         // 信息已全部加载完成的提示语
         "loadedAllDataTip": "没有更多了",
@@ -31,7 +30,6 @@ var SwipeRefresh = (function () {
 
     function moveEnd() {
         var boundary = judgeBoundary(pMap.swipeCore.y);
-        console.log(pMap.swipeCore.y)
 
         constMap.fnMap = constMap.fnMap || {
                 // 回弹到恰好显示整个topBox,同时刷新数据
