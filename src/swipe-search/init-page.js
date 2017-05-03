@@ -1918,14 +1918,18 @@ var cityData = [
 
 var container = document.querySelector('.city-boxes');
 var str = '';
+
 each(cityData, function (item) {
     var id = 'anchor_' + (item.name.length > 1 ? '★' : item.name);
-    str += '<li class="box-item"><p class="text" id="' + id + '">' + item.name + '</p><ul class="city-list">'
+    id = id.toLowerCase();
+
+    str += '<li class="box-item"><p class="text" id="' + id + '">' + item.name + '</p><ul class="city-list">';
 
     each(item.cities, function (cityItem) {
-        str += '<li class="city-item"><span class="city-name">' + cityItem.name + '</span></li>'
+        str += '<li class="city-item"><span class="city-name">' + cityItem.name + '</span></li>';
     });
-    str += '</ul></li>'
+
+    str += '</ul></li>';
 });
 
 container.innerHTML = str;
