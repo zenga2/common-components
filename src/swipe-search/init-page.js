@@ -1921,8 +1921,6 @@ var str = '';
 
 each(cityData, function (item) {
     var id = 'anchor_' + (item.name.length > 1 ? '★' : item.name);
-    id = id.toLowerCase();
-
     str += '<li class="box-item"><p class="text" id="' + id + '">' + item.name + '</p><ul class="city-list">';
 
     each(item.cities, function (cityItem) {
