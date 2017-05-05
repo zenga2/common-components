@@ -54,8 +54,6 @@ var SwipeCore = (function () {
 
     // 初始化一些样式
     function initStyle() {
-        console.log('initStyle');
-        console.log(pMap)
         setCss(pMap.wrapper, {
             overflow: 'hidden',
             height: pMap.wrapperHeight + 'px'
@@ -73,6 +71,7 @@ var SwipeCore = (function () {
 
             pMap.startY = touches[0].pageY;
             moveStart();
+            console.log(touches[0].pageY);
         }
 
         e.preventDefault();
@@ -104,6 +103,7 @@ var SwipeCore = (function () {
         if (touches && touches.length > 0) {
             // 滑动过程中
             moveIn(touches[0].pageY);
+            console.log(touches[0].pageY);
         }
 
         e.preventDefault();
@@ -231,14 +231,11 @@ var SwipeCore = (function () {
             setTranslateY(ease(pMap.translateY, pMap.disY));
 
             if (currV === 0 || pMap.translateY > -pMap.topBoxHeight) {
-                console.log(1)
                 // 滑动过程结束
                 moveEnd();
             } else if (currV > 0) {
-                console.log(2)
                 movefreely(Math.abs(currV), constMap.a, constMap.DOWN, pMap.lastY);
             } else {
-                console.log(3)
                 movefreely(Math.abs(currV), constMap.a, constMap.UP, pMap.lastY);
             }
         }
@@ -320,7 +317,6 @@ var SwipeCore = (function () {
     // 设置scroller的translateY的值
     function setTranslateY(tlY) {
         pMap.translateY = tlY;
-        console.log(tlY);
         setCss(pMap.scroller, {
             "transform": "translate3d(0," + pMap.translateY + "px,0)"
         });
@@ -404,7 +400,6 @@ var SwipeCore = (function () {
             : defaultEvent;
 
         fn && fn(event);
-        console.log(eventType, event)
     }
 
     return createClass(
