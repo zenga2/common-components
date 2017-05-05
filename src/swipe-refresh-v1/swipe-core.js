@@ -46,9 +46,10 @@ var SwipeCore = (function () {
             // 当前的滑动速度
             currV: 0,
             // 上一次触发touchmove时的时间(ms)
-            lastTime: null,
+            // lastTime: null,
             // 一次触摸中，是否触发了touchmove事件
-            isTouchMove: false
+            isTouchMove: false,
+            startTime: null
         });
     }
 
@@ -84,7 +85,8 @@ var SwipeCore = (function () {
         pMap.lastY = pMap.startY;
         pMap.disY = 0;
         pMap.currV = 0;
-        pMap.lastTime = +(new Date);
+        // pMap.lastTime = +(new Date);
+        pMap.startTime = +(new Date);
 
         pMap.isTouchMove = false;
 
@@ -183,10 +185,10 @@ var SwipeCore = (function () {
     // 计算当前的滑动速度
     function calculateSpeed() {
         var currTime = +(new Date);
-        var t = currTime - pMap.lastTime;
+        var t = currTime - pMap.startTime;
         if (t > constMap.interval) {
-            pMap.currV = pMap.disY / t;
-            pMap.lastTime = currTime;
+            pMap.currV = (pMap.lastY - pMap.startY) / t;
+            // pMap.lastTime = currTime;
         }
     }
 
