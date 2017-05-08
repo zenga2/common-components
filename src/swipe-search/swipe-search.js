@@ -8,8 +8,8 @@ var SwipeSearch = (function () {
             this.letterItemHeight = firstLetter.clientHeight;
             // 第一个字母的视口坐标
             this.firstLetterTop = firstLetter.getBoundingClientRect().top;
-            // 第一个锚元素的相对于包含块的垂直偏移量
-            this.firstAnchorElTop = this.anchorEls[0].offsetTop;
+            // 第一个元素(数据区)的相对于包含块的垂直偏移量
+            this.firstElTop = this.dataWrapper.children[0].children[0].offsetTop;
 
             this.currY = this.startY = touches[0].clientY;
             this.lastLetter = this.currLetter = '';
@@ -76,11 +76,10 @@ var SwipeSearch = (function () {
 
     // 将数据列表中与当前字母对应的锚元素，滚动到屏幕最顶端(尽最大可能)
     function scrollToEl() {
-        var id = 'anchor_' + this.currLetter;
-        var anchorEl = document.getElementById(id);
+        var anchorEl = this.queryAnchorEl();
         if (anchorEl) {
-            var currAnchorElTop = document.getElementById(id).offsetTop;
-            this.dataWrapper.scrollTop = currAnchorElTop - this.firstAnchorElTop;
+            var currAnchorElTop = anchorEl.offsetTop;
+            this.dataWrapper.scrollTop = currAnchorElTop - this.firstElTop;
         }
     }
 
@@ -112,7 +111,6 @@ var SwipeSearch = (function () {
         var wrapper = this.wrapper;
         this.scroller = this.wrapper.children[0];
         this.allLetters = this.scroller.children;
-        this.anchorEls = this.dataWrapper.querySelectorAll(this.anchorSelector);
 
         // bind events
         this.scroller.addEventListener('touchstart', start.bind(this));

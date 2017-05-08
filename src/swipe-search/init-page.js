@@ -1936,8 +1936,12 @@ window.onload = function () {
     new SwipeSearch({
         wrapper: '.letter-wrapper',
         dataWrapper: '.city-wrapper',
-        anchorSelector: '.content .city-wrapper .text',
-        letterDisplayBox: '.letter-display-box'
+        letterDisplayBox: '.letter-display-box',
+        // 查找每个字母对应的锚元素
+        queryAnchorEl: function () {
+            var id = 'anchor_' + this.currLetter;
+            return document.getElementById(id);
+        }
     });
 
     document.querySelector('.back').addEventListener('click', function () {
