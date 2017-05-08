@@ -6,7 +6,7 @@
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Title</title>
     <style type="text/css">
-        html, body, div, ul, li {
+        html, body, div, ul, li, h1 {
             margin: 0;
             padding: 0;
         }
@@ -29,9 +29,23 @@
         a {
             text-decoration: none;
         }
+        .header {
+            position: relative;
+            height: 44px;
+            line-height: 44px;
+            background: #67b8ce;
+        }
+        .header .title {
+            text-align: center;
+            font-size: 17px;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
+<div class="header">
+    <h1 class="title">请在移动模式下查看</h1>
+</div>
 <ul>
     <li><a href="src/swipe-refresh-v1/swipe-refresh.html">滑动刷新v1(原生js)</a></li>
     <li><a href="src/swipe-refresh-v2/swipe-refresh.html">滑动刷新v2(原生js)</a></li>
