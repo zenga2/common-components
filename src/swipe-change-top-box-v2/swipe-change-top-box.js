@@ -8,8 +8,8 @@ window.onload = function () {
         top: '44px',
         left: '0',
         width: '100%',
-        transform: 'scale(1,1) translateZ(0)',
-        'transform-origin': 'top center'
+        transform: 'scale(1,1)',
+        transformOrigin: 'top center'
     });
 
     document.querySelector('.content').appendChild(cloneNode);
@@ -31,7 +31,6 @@ window.onload = function () {
                 isHidden = false;
             }
 
-            console.log('scale(' + 'ratio' + ',' + 'ratio' + ')')
             setCss(cloneNode, {
                 transform: 'scale(' + ratio + ',' + ratio + ')'
             })
@@ -45,8 +44,7 @@ window.onload = function () {
 
         setCss(cloneNode, {
             transition: 'all 350ms',
-            transform: 'scale(1,1)',
-            marginTop: '0'
+            transform: 'scale(1,1)'
         })
 
         pMap.setTranslateY(0);
