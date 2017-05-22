@@ -8,7 +8,8 @@ window.onload = function () {
         top: '44px',
         left: '0',
         width: '100%',
-        transform: 'scale(1,1) translateZ(0)'
+        transform: 'scale(1,1) translateZ(0)',
+        'transform-origin': 'top center'
     });
 
     document.querySelector('.content').appendChild(cloneNode);
@@ -32,8 +33,7 @@ window.onload = function () {
 
             console.log('scale(' + 'ratio' + ',' + 'ratio' + ')')
             setCss(cloneNode, {
-                transform: 'scale(' + ratio + ',' + ratio + ')',
-                marginTop: tlY / 2 + 'px'
+                transform: 'scale(' + ratio + ',' + ratio + ')'
             })
         }
     }
