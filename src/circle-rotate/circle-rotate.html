@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Title</title>
+    <style type="text/css">
+        html, body, div {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 50px;
+            background: #fff;
+        }
+
+        .container .front-left {
+            z-index: 10;
+            position: absolute;
+            left: 0;
+            width: 50px;
+            height: 100%;
+            background: inherit;
+        }
+
+        .container .rotate {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            transform: rotate(45deg);
+            border: 10px solid transparent;
+        }
+
+        .container .rotate.left {
+            animation: rotate-left-circle 6s linear 0s infinite;
+            border-color: transparent transparent red red;
+        }
+
+        .container .rotate.right {
+            z-index: 11;
+            opacity: 0;
+            animation: rotate-right-circle 6s linear 3s infinite;
+            border-color: red red transparent transparent;
+        }
+
+        @keyframes rotate-left-circle {
+            0% {
+                transform: rotate(45deg)
+            }
+            50% {
+                transform: rotate(225deg)
+            }
+            100% {
+                transform: rotate(225deg)
+            }
+        }
+
+        @keyframes rotate-right-circle {
+            0% {
+                opacity: 1;
+                transform: rotate(45deg)
+            }
+            50% {
+                opacity: 1;
+                transform: rotate(225deg)
+            }
+            50.1% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 0;
+                transform: rotate(225deg)
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="front-left"></div>
+    <div class="rotate left">
+    </div>
+    <div class="rotate right">
+    </div>
+</div>
+</body>
+</html>
